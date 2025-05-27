@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Subcategory } from '../models/Subcategory'
+import { SubCategory } from '../models/Subcategory'
 import { Category} from '../models/Category'
 
 //POST /api/subcategory/create
@@ -18,7 +18,7 @@ export const createSubcategory = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Category not found"});
         }
 
-        const subcategory = new Subcategory({ name, description, category: categoryId });
+        const subcategory = new SubCategory({ name, description, category: categoryId });
         await subcategory.save();
 
         return res.status(201).json(
@@ -37,7 +37,13 @@ export const createSubcategory = async (req: Request, res: Response) => {
 
 export const getAllSubcategories = async (req: Request, res: Response) => {
     try {
-        const subcategories = await Subcategory.find().populate("category", "name slug").sort({ createdAt: -1 });
+        const { categoryId } = req.params;
+
+        if(!categoryId){
+            return res.status(400).json({ message: "categoryId parameter is equired" });
+        }
+
+        const subcategories = await SubCategory.find({ category: categoryId }).populate("category", "name slug").sort({ createdAt: -1 });
 
         return res.status(200).json(subcategories);
     } catch (error) {
