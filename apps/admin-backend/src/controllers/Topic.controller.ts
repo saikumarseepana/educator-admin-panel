@@ -48,3 +48,56 @@ export const getTopicsBySubcategory = async (req: Request, res: Response)=> {
         return res.status(500).json({ message: "Failed to fetch topics" });
     }
 };
+
+//PUT /api/topic/update/:id
+
+export const updateTopic = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title, content, subcategoryId, videoUrl } = req.body;
+        
+        const topic = await Topic.findById(id);
+        if(!topic) {
+            return res.status(404).json({ message: "Topic not found" });
+        }
+
+        if(title) {
+            topic.title = title;
+        }
+        if(content) {
+            topic.content = content;
+        }
+        if(videoUrl) {
+            topic.videoUrl = videoUrl;
+        }
+        if(subcategoryId) {
+            topic.subcategory = subcategoryId;
+        }
+
+        await topic.save();
+
+        return res.status(200).json({ message: "Topic updated successfully" });
+    } catch(error) {
+        console.error("Error updating topic:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// DELETE /api/topic/delete/:id
+
+export const deleteTopic = async (req: Request, res: Response)=> {
+    try {
+        const { id } = req.params;
+
+        const topic = await Topic.findByIdAndDelete(id);
+
+        if(!topic) {
+            return res.status(404).json({ message: "Topic not found" });
+        }
+
+        return res.status(200).json({ message: "Topic deleted successfully" });
+    }catch (error) {
+        console.error("Error deleting topic:", error);
+        return res.status(500).json({ message: "Internal server error"});
+    }
+};
