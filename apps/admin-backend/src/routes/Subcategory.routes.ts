@@ -1,13 +1,19 @@
 import express from 'express'
-import { createSubcategory, getAllSubcategories } from '../controllers/Subcategory.controller'
+import { createSubcategory, deleteSubcategory, getAllSubcategories, updateSubcategory } from '../controllers/Subcategory.controller'
 import { verifyToken } from '../middlewares/authMiddleware'
 
 const router = express.Router();
 
-//create subcategory
+//POST
 router.post('/create', verifyToken, createSubcategory);
 
-//get subcategories under a specific category
+//GET
 router.get('/category/:categoryId', verifyToken, getAllSubcategories);
+
+//PUT
+router.put('/update/:id', verifyToken, updateSubcategory);
+
+//DELETE
+router.delete('/delete/:id', verifyToken, deleteSubcategory);
 
 export default router;
